@@ -23,8 +23,8 @@ Promise.retry = function(fn, times, delay) {
 
 async function run() {
   try {
-    // Hack: wait for doctl to get installed
-    await Promise.retry(() => exec.exec('doctl', [], {'silent': true}), 30, 1000);
+    // Hack: wait for doctl to get set up
+    await Promise.retry(() => exec.exec('doctl', ['apps', 'list'], {'silent': true}), 30, 1000);
     var applicationId = core.getInput('application-id');
     var specPath = core.getInput('spec');
     await exec.exec('doctl apps update', [applicationId, '--spec', specPath]);
