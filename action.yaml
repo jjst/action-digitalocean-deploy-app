@@ -8,9 +8,9 @@ inputs:
     description: 'Path of the spec file to deploy'
     required: false
     default: './deploy/app.yaml'
-  application-id: 'UUID of the (already existing) app to update'
-  required: false
-runs:
+  application-id:
+    description: 'UUID of the (already existing) app to update'
+    required: false
 runs:
   using: 'node12'
   main: 'dist/index.js'
