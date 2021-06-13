@@ -1,0 +1,29 @@
+name: 'Digital Ocean Deploy App'
+description: 'Deploy an app from an app spec on Digital Ocean'
+inputs:
+  token:
+    description: 'A DigitalOcean personal access token'
+    required: true
+  spec:
+    description: 'Path of the spec file to deploy'
+    required: false
+    default: './deploy/app.yaml'
+  application-id: 'UUID of the (already existing) app to update'
+  required: false
+outputs:
+  random-number:
+    description: "Random number"
+    value: ${{ steps.random-number-generator.outputs.random-id }}
+runs:
+  using: "composite"
+  steps:
+    - name: Install doctl
+      uses: digitalocean/action-doctl@v2
+      with:
+        token: ${{ inputs.token }}
+    - name: Update app spec
+      run: |
+        doctl apps update ${{ inputs.application-id }} --spec ${{ inputs.spec }}
+    - name: Create deployment
+      run: |
+        doctl apps create-deployment ${{ inputs.application-id }} --wait
