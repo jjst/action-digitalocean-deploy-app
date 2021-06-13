@@ -11,15 +11,6 @@ inputs:
   application-id: 'UUID of the (already existing) app to update'
   required: false
 runs:
-  using: "composite"
-  steps:
-    - name: Install doctl
-      uses: digitalocean/action-doctl@v2
-      with:
-        token: ${{ inputs.token }}
-    - name: Update app spec
-      run: |
-        doctl apps update ${{ inputs.application-id }} --spec ${{ inputs.spec }}
-    - name: Create deployment
-      run: |
-        doctl apps create-deployment ${{ inputs.application-id }} --wait
+runs:
+  using: 'node12'
+  main: 'dist/index.js'

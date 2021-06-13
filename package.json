@@ -1,0 +1,32 @@
+{
+  "name": "digitalocean-deploy-app",
+  "version": "1.0.0",
+  "description": "Github action to deploy an app on Digital Ocean",
+  "main": "index.js",
+  "scripts": {
+    "lint": "eslint main.js",
+    "test": "npm install; npm run lint",
+    "package": "ncc build main.js -o dist"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jjst/digitalocean-deploy-app.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jjst/digitalocean-deploy-app/issues"
+  },
+  "homepage": "https://github.com/jjst/digitalocean-deploy-app#readme",
+  "dependencies": {
+    "@actions/core": "^1.4.0",
+    "@actions/exec": "^1.0.4",
+    "@actions/github": "^5.0.0",
+    "action-doctl": "github:digitalocean/action-doctl"
+  },
+  "devDependencies": {
+    "@zeit/ncc": "^0.22.3",
+    "eslint": "^6.8.0"
+  }
+}
