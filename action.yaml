@@ -10,10 +10,6 @@ inputs:
     default: './deploy/app.yaml'
   application-id: 'UUID of the (already existing) app to update'
   required: false
-outputs:
-  random-number:
-    description: "Random number"
-    value: ${{ steps.random-number-generator.outputs.random-id }}
 runs:
   using: "composite"
   steps:
