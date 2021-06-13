@@ -1,5 +1,9 @@
 name: 'Digital Ocean Deploy App'
 description: 'Deploy an app from an app spec on Digital Ocean'
+author: 'Jérémie Jost <jeremiejost@gmail.com>'
+branding:
+  icon: 'droplet'
+  color: 'blue'
 inputs:
   token:
     description: 'A DigitalOcean personal access token'
