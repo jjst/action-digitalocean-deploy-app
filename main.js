@@ -27,7 +27,8 @@ async function run() {
     await Promise.retry(() => exec.exec('doctl', ['apps', 'list'], {'silent': true}), 30, 1000);
     var applicationId = core.getInput('application-id');
     var specPath = core.getInput('spec');
-    await exec.exec('doctl apps update', [applicationId, '--spec', specPath]);
+    await exec.exec('doctl', ['apps', 'update', applicationId, '--spec', specPath]);
+    await exec.exec('doctl', ['apps', 'create-deployment', applicationId, '--wait']);
   } catch (error) {
     core.setFailed(error.message);
   }
