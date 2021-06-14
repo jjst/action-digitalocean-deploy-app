@@ -33,6 +33,7 @@ async function checkOutput(command, args) {
       output += data.toString();
     }
   };
+  options.silent = true;
   await exec.exec(command, args, options);
   return output;
 }
