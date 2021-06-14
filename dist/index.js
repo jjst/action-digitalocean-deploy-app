@@ -6215,6 +6215,20 @@ Promise.retry = function(fn, times, delay) {
     });
 };
 
+async function checkOutput(command, args) {
+  let output = '';
+
+  const options = {};
+  options.listeners = {
+    stdout: (data) => {
+      output += data.toString();
+    }
+  };
+  await exec.exec(command, args, options);
+  return output;
+}
+
+
 async function run() {
   try {
     const specPath = core.getInput('spec', { required: true });
@@ -6226,12 +6240,12 @@ async function run() {
       const deploySpec = yaml.load(fs.readFileSync(specPath, 'utf8'));
       const deploySpecName = deploySpec['name']
       core.debug("Deploy name: ", deploySpec['name']);
-      const appListStr = await exec.exec('doctl app list --no-header -o json');
+      const appListStr = await checkOutput('doctl app list --no-header -o json');
       const appList = JSON.parse(appListStr);
       var existingApp = appList.find(app => app.spec.name == deploySpecName);
       if (!existingApp) {
         core.info(`No existing app found with name '${deploySpecName}'; creating a new app.`)
-        const createdApps = await exec.exec('doctl app create --spec ./test/test-app.yaml -o json');
+        const createdApps = await checkOutput('doctl app create --spec ./test/test-app.yaml -o json');
         existingApp = createdApps.find(app => app.spec.name == deploySpecName);
         core.info(`Successfully created new app with id ${existingApp.id}.`)
       }
