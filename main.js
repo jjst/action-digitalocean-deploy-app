@@ -26,14 +26,28 @@ Promise.retry = function(fn, times, delay) {
 
 async function run() {
   try {
-    const deploySpec = yaml.load(fs.readFileSync(specPath, 'utf8'));
-    console.log("Deploy name: ", deploySpec['name']);
+    const specPath = core.getInput('spec', { required: true });
+    var applicationId = core.getInput('application-id');
     // Hack: wait for doctl to get set up
     await Promise.retry(() => exec.exec('doctl', ['apps', 'list'], {'silent': true}), 30, 1000);
-    var applicationId = core.getInput('application-id');
-    var specPath = core.getInput('spec');
-    await exec.exec('doctl', ['apps', 'update', applicationId, '--spec', specPath]);
-    await exec.exec('doctl', ['apps', 'create-deployment', applicationId, '--wait']);
+    if (!applicationId) {
+      core.info("'application-id' not set, trying to determine application-id from spec name");
+      const deploySpec = yaml.load(fs.readFileSync(specPath, 'utf8'));
+      const deploySpecName = deploySpec['name']
+      core.debug("Deploy name: ", deploySpec['name']);
+      const appListStr = await exec.exec('doctl app list --no-header -o json');
+      const appList = JSON.parse(appListStr);
+      var existingApp = appList.find(app => app.spec.name == deploySpecName);
+      if (!existingApp) {
+        core.info(`No existing app found with name '${deploySpecName}'; creating a new app.`)
+        const createdApps = await exec.exec('doctl app create --spec ./test/test-app.yaml -o json');
+        existingApp = createdApps.find(app => app.spec.name == deploySpecName);
+        core.info(`Successfully created new app with id ${existingApp.id}.`)
+      }
+      applicationId = existingApp.id
+    }
+    await exec.exec('doctl', ['app', 'update', applicationId, '--spec', specPath]);
+    await exec.exec('doctl', ['app', 'create-deployment', applicationId, '--wait']);
   } catch (error) {
     core.setFailed(error.message);
   }
