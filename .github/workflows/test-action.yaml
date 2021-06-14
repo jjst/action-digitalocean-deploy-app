@@ -10,7 +10,14 @@ jobs:
         uses: actions/checkout@v2
       - name: Test action
         uses: ./ # Uses an action in the root directory
-        id: deploy
+        id: test-action
         with:
           token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
           spec: ./test/test-app.yaml
+      - name: Install doctl for cleanup
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+      - name: Cleanup created app
+        run: |
+          doctl app delete -f ${{ steps.test-action.outputs.app-id }}

@@ -6233,7 +6233,7 @@ async function checkOutput(command, args) {
 async function run() {
   try {
     const specPath = core.getInput('spec', { required: true });
-    var applicationId = core.getInput('application-id');
+    var applicationId = core.getInput('app-id');
     // Hack: wait for doctl to get set up
     await Promise.retry(() => exec.exec('doctl', ['apps', 'list'], {'silent': true}), 30, 1000);
     if (!applicationId) {
@@ -6254,6 +6254,7 @@ async function run() {
       }
       applicationId = existingApp.id
     }
+    core.setOutput("app-id", applicationId);
     await exec.exec('doctl', ['app', 'update', applicationId, '--spec', specPath]);
     await exec.exec('doctl', ['app', 'create-deployment', applicationId, '--wait']);
   } catch (error) {
