@@ -1,0 +1,15 @@
+on: [push]
+
+jobs:
+  test-action:
+    runs-on: ubuntu-latest
+    name: Test digital ocean deploy app action
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Test action
+        uses: ./ # Uses an action in the root directory
+        id: deploy
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+          application-id: 'Mona the Octocat'
