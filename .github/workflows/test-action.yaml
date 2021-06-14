@@ -12,4 +12,4 @@ jobs:
         id: deploy
         with:
           token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-          application-id: 'Mona the Octocat'
+          spec: ./test/test-app.yaml
