@@ -23,7 +23,8 @@
     "@actions/core": "^1.4.0",
     "@actions/exec": "^1.0.4",
     "@actions/github": "^5.0.0",
-    "action-doctl": "github:digitalocean/action-doctl"
+    "action-doctl": "github:digitalocean/action-doctl",
+    "js-yaml": "^3.14.1"
   },
   "devDependencies": {
     "@zeit/ncc": "^0.22.3",

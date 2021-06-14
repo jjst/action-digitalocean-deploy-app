@@ -1,5 +1,8 @@
 const core = require('@actions/core');
 const exec = require('@actions/exec');
+const yaml = require('js-yaml');
+const fs   = require('fs');
+
 require('action-doctl');
 
 Promise.retry = function(fn, times, delay) {
@@ -23,6 +26,8 @@ Promise.retry = function(fn, times, delay) {
 
 async function run() {
   try {
+    const deploySpec = yaml.load(fs.readFileSync(specPath, 'utf8'));
+    console.log("Deploy name: ", deploySpec['name']);
     // Hack: wait for doctl to get set up
     await Promise.retry(() => exec.exec('doctl', ['apps', 'list'], {'silent': true}), 30, 1000);
     var applicationId = core.getInput('application-id');
