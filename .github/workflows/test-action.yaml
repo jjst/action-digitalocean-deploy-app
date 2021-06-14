@@ -8,9 +8,15 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Test action
+      - name: Test action (create)
         uses: ./ # Uses an action in the root directory
-        id: test-action
+        id: test-action-create
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+          spec: ./test/test-app.yaml
+      - name: Test action (update existing)
+        uses: ./ # Uses an action in the root directory
+        id: test-action-update
         with:
           token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
           spec: ./test/test-app.yaml
@@ -20,4 +26,4 @@ jobs:
           token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
       - name: Cleanup created app
         run: |
-          doctl app delete -f ${{ steps.test-action.outputs.app-id }}
+          doctl app delete -f ${{ steps.test-action-create.outputs.app-id }}
