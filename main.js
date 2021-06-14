@@ -3,7 +3,12 @@ const exec = require('@actions/exec');
 const yaml = require('js-yaml');
 const fs   = require('fs');
 
-require('action-doctl');
+try {
+  // Install doctl if not set up
+  exec.exec('doctl version');
+} catch (error) {
+  require('action-doctl');
+}
 
 Promise.retry = function(fn, times, delay) {
     return new Promise(function(resolve, reject){
