@@ -6194,12 +6194,6 @@ const exec = __webpack_require__(986);
 const yaml = __webpack_require__(414);
 const fs   = __webpack_require__(747);
 
-try {
-  // Install doctl if not set up
-  exec.exec('doctl version');
-} catch (error) {
-  __webpack_require__(530);
-}
 
 Promise.retry = function(fn, times, delay) {
     return new Promise(function(resolve, reject){
@@ -6236,6 +6230,12 @@ async function checkOutput(command, args) {
 
 
 async function run() {
+  try {
+    // Install doctl if not set up
+    await exec.exec('doctl version', {'silent': true});
+  } catch (error) {
+    __webpack_require__(530);
+  }
   try {
     const specPath = core.getInput('spec', { required: true });
     var applicationId = core.getInput('app-id');

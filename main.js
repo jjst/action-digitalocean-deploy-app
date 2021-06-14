@@ -3,12 +3,6 @@ const exec = require('@actions/exec');
 const yaml = require('js-yaml');
 const fs   = require('fs');
 
-try {
-  // Install doctl if not set up
-  exec.exec('doctl version');
-} catch (error) {
-  require('action-doctl');
-}
 
 Promise.retry = function(fn, times, delay) {
     return new Promise(function(resolve, reject){
@@ -45,6 +39,12 @@ async function checkOutput(command, args) {
 
 
 async function run() {
+  try {
+    // Install doctl if not set up
+    await exec.exec('doctl version', {'silent': true});
+  } catch (error) {
+    require('action-doctl');
+  }
   try {
     const specPath = core.getInput('spec', { required: true });
     var applicationId = core.getInput('app-id');
