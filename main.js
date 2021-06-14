@@ -58,6 +58,8 @@ async function run() {
         const createdApps = await checkOutput('doctl app create --spec ./test/test-app.yaml -o json');
         existingApp = createdApps.find(app => app.spec.name == deploySpecName);
         core.info(`Successfully created new app with id ${existingApp.id}.`)
+      } else {
+        core.info(`Found existing app with name '${deploySpecName}' and id ${existingApp.id}`)
       }
       applicationId = existingApp.id
     }
