@@ -3,7 +3,6 @@ const exec = require('@actions/exec');
 const yaml = require('js-yaml');
 const fs   = require('fs');
 
-require('action-doctl');
 
 Promise.retry = function(fn, times, delay) {
     return new Promise(function(resolve, reject){
@@ -41,6 +40,12 @@ async function checkOutput(command, args) {
 
 async function run() {
   try {
+    // Install doctl if not set up
+    await exec.exec('doctl version', {'silent': true});
+  } catch (error) {
+    require('action-doctl');
+  }
+  try {
     const specPath = core.getInput('spec', { required: true });
     var applicationId = core.getInput('app-id');
     // Hack: wait for doctl to get set up
@@ -61,10 +66,14 @@ async function run() {
         core.info(`>>> Successfully created new app with id '${existingApp.id}'.`)
       } else {
         core.info(`>>> Updating existing app with name '${deploySpecName}' and id '${existingApp.id}' using new app spec...`)
-        await exec.exec('doctl', ['app', 'update', applicationId, '--spec', specPath]);
+        await exec.exec('doctl', ['app', 'update', existingApp.id, '--spec', specPath]);
         core.info(`>>> Successfully updated app.`)
       }
       applicationId = existingApp.id
+    } else {
+      core.info(`>>> Updating app with id '${applicationId}' using new app spec...`)
+      await exec.exec('doctl', ['app', 'update', applicationId, '--spec', specPath]);
+      core.info(`>>> Successfully updated app.`)
     }
     core.setOutput("app-id", applicationId);
     core.info(`>>> Creating new deployment...`)
