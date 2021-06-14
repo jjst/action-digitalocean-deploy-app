@@ -61,10 +61,14 @@ async function run() {
         core.info(`>>> Successfully created new app with id '${existingApp.id}'.`)
       } else {
         core.info(`>>> Updating existing app with name '${deploySpecName}' and id '${existingApp.id}' using new app spec...`)
-        await exec.exec('doctl', ['app', 'update', applicationId, '--spec', specPath]);
+        await exec.exec('doctl', ['app', 'update', existingApp.id, '--spec', specPath]);
         core.info(`>>> Successfully updated app.`)
       }
       applicationId = existingApp.id
+    } else {
+      core.info(`>>> Updating app with id '${applicationId}' using new app spec...`)
+      await exec.exec('doctl', ['app', 'update', applicationId, '--spec', specPath]);
+      core.info(`>>> Successfully updated app.`)
     }
     core.setOutput("app-id", applicationId);
     core.info(`>>> Creating new deployment...`)
